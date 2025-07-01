@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # Load model
 model = joblib.load("car_price_model.pkl")
 
-# Title
+st.set_page_config(page_title="Car Price Predictor", layout="centered")
 st.title("🚗 Car Price Prediction with Explainability")
 
 # Input form
@@ -36,15 +36,14 @@ input_data = pd.DataFrame([[year, km_driven,
                             trans_map[transmission], owner_map[owner]]],
                           columns=['year', 'km_driven', 'fuel', 'seller_type', 'transmission', 'owner'])
 
-# Predict
 if st.button("Predict Price"):
-    price = model.predict(input_data)[0]
-    st.success(f"Predicted Car Price: ₹{int(price):,}")
+    prediction = model.predict(input_data)[0]
+    st.success(f"Estimated Price: ₹{int(prediction):,}")
 
-    # Explain with SHAP
+    # SHAP Explanation
     explainer = shap.TreeExplainer(model)
     shap_values = explainer.shap_values(input_data)
-    st.subheader("🔍 Feature Impact")
+    st.subheader("🔍 Feature Importance")
     fig = plt.figure()
     shap.summary_plot(shap_values, input_data, plot_type="bar", show=False)
     st.pyplot(fig)
